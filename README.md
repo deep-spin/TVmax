@@ -34,3 +34,11 @@ python3 run.py --RUN=test --CKPT_V=<VERSION> --CKPT_E=<EPOCH TO LOAD> --M='mca' 
 ```
 and the result file is stored in ```results/result_test/result_run_<'PATH+random number' or 'VERSION+EPOCH'>.json```. The obtained result json file can be uploaded to [Eval AI](https://evalai.cloudcv.org/web/challenges/challenge-page/163/overview) to evaluate the scores on *test-dev* and *test-std* splits.
 
+# Citation
+
+    @inproceedings{martins2021sparse,
+      author    = {Martins, Pedro Henrique and Niculae, Vlad and Marinho, Zita and  Martins, Andr{\'e} FT},
+      title     = {Sparse and Structured Visual Attention},
+      booktitle = {Proc. ICIP},
+      year      = {2021}
+    }
