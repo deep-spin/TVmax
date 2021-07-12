@@ -30,7 +30,7 @@ The evaluations of both the VQA 2.0 *test-dev* and *test-std* splits are run as 
 python3 run.py --RUN=test --CKPT_V=<VERSION> --CKPT_E=<EPOCH TO LOAD> --M='mca' --gen_func=<ATTENTION> --features=<FEATURES>
 
 ```
-and the result file is stored in ```results/result_test/result_run_<'PATH+random number' or 'VERSION+EPOCH'>.json```. The obtained result json file can be uploaded to [Eval AI](https://evalai.cloudcv.org/web/challenges/challenge-page/163/overview) to evaluate the scores on *test-dev* and *test-std* splits.
+and the result file is stored in ```./results/result_test/```. The obtained result json file can be uploaded to [Eval AI](https://evalai.cloudcv.org/web/challenges/challenge-page/163/overview) to evaluate the scores on *test-dev* and *test-std* splits.
 
 # Citation
 
