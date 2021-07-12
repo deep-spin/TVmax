@@ -1,9 +1,6 @@
 # Sparse and Structured Visual Attention
 Implementation of the experiments for visual question answering with sparse and structured visual attention.
 
-
-## Visual Question Answering
-
 ### Requirements
 
 We recommend to follow the procedure in the official [MCAN](https://github.com/MILVLG/mcan-vqa) repository in what concerns software and hardware requirements. We also use the same setup - see there how to organize the `datasets` folders. The only difference is that we also use grid features; you can download them from [here](https://github.com/facebookresearch/grid-feats-vqa).
