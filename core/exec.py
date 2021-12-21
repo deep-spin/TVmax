@@ -143,11 +143,12 @@ class Execution:
 
             time_start = time.time()
             # Iteration
-            for step, (img_feat_iter,ques_ix_iter,ans_iter) in enumerate(dataloader):
+            for step, (img_feat_iter,ques_ix_iter,ans_iter,size) in enumerate(dataloader):
 
                 optim.zero_grad()
 
-                img_feat_iter = img_feat_iter.cuda()
+                img_feat_iter = img_feat_iter.cuda()#.view(1,2048,-1).transpose(1,2).cuda()
+                
                 ques_ix_iter = ques_ix_iter.cuda()
                 ans_iter = ans_iter.cuda()
 
@@ -158,7 +159,8 @@ class Execution:
                     sub_ans_iter = ans_iter[accu_step * self.__C.SUB_BATCH_SIZE:(accu_step + 1) * self.__C.SUB_BATCH_SIZE]
 
 
-                    pred = net(sub_img_feat_iter,sub_ques_ix_iter)
+                    pred = net(sub_img_feat_iter,sub_ques_ix_iter,size)
+
                     if self.__C.MODEL=='mca':
                         loss = loss_fn(pred, sub_ans_iter)
                     else:
@@ -188,12 +190,9 @@ class Execution:
                     norm_v = torch.norm(named_params[name][1].grad).cpu().data.numpy() \
                         if named_params[name][1].grad is not None else 0
                     grad_norm[name] += norm_v * self.__C.GRAD_ACCU_STEPS
-                    # print('Param %-3s Name %-80s Grad_Norm %-20s'%
-                    #       (str(grad_wt),
-                    #        params[grad_wt][0],
-                    #        str(norm_v)))
 
                 optim.step()
+                 
 
             time_end = time.time()
             print('Finished in {}s'.format(int(time_end-time_start)))
@@ -218,22 +217,7 @@ class Execution:
                     patience=0
                 else:
                     patience+=1
-            # if self.__C.VERBOSE:
-            #     logfile = open(
-            #         self.__C.LOG_PATH +
-            #         'log_run_' + self.__C.VERSION + '.txt',
-            #         'a+'
-            #     )
-            #     for name in range(len(named_params)):
-            #         logfile.write(
-            #             'Param %-3s Name %-80s Grad_Norm %-25s\n' % (
-            #                 str(name),
-            #                 named_params[name][0],
-            #                 str(grad_norm[name] / data_size * self.__C.BATCH_SIZE)
-            #             )
-            #         )
-            #     logfile.write('\n')
-            #     logfile.close()
+
 
             loss_sum = 0
             grad_norm = np.zeros(len(named_params))
@@ -298,19 +282,19 @@ class Execution:
         for step, (
                 img_feat_iter,
                 ques_ix_iter,
-                ans_iter
+                ans_iter, size
         ) in enumerate(dataloader):
             print("\rEvaluation: [step %4d/%4d]" % (
                 step,
                 int(data_size / self.__C.EVAL_BATCH_SIZE),
             ), end='          ')
-
+            
             img_feat_iter = img_feat_iter.cuda()
             ques_ix_iter = ques_ix_iter.cuda()
-
+            eval_=True
             pred = net(
                 img_feat_iter,
-                ques_ix_iter
+                ques_ix_iter, size, eval_
             )
             pred_np = pred.cpu().data.numpy()
             pred_argmax = np.argmax(pred_np, axis=1)
@@ -331,7 +315,7 @@ class Execution:
                 if pred_np.shape[0] != self.__C.EVAL_BATCH_SIZE:
                     pred_np = np.pad(
                         pred_np,
-                        ((0, self.__C.EVAL_BATCH_SIZE - pred_np.shape[0]), (0, 0)),
+                        ((0, self.__C.BATCH_SIZE - pred_np.shape[0]), (0, 0)),
                         mode='constant',
                         constant_values=-1
                     )
